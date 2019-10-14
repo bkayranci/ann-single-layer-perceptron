@@ -3,6 +3,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import random
+from PIL import Image
 
 dataset_file = 'dataset.csv'
 loop_timeout = 0.001 # yavaslatmak icin degeri buyutun, grafigin yenileme dongusunun suresi
@@ -125,6 +126,8 @@ for k in range(1, max_iterations):
         plt.pause(loop_timeout)
         if last:
             plt.savefig('result.png')
+            result = Image.open("result.png")
+            result.show()
             break
     if last:
         break
@@ -133,8 +136,3 @@ for k in range(1, max_iterations):
         print("\n===============================================================")
         print("\n"+str(k)+" adimda ogrenildi!")
         last = True
-
-
-from PIL import Image
-result = Image.open("result.png")
-result.show()
