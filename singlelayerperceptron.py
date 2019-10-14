@@ -64,7 +64,7 @@ for k in range(1, max_iterations):
         # bias ekle
         output = bias + sum
 
-        if output >= threshold:
+        if output > threshold:
             y = 1
         else:
             y = -1     
