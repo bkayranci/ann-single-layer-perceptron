@@ -5,10 +5,12 @@ import numpy as np
 import random
 
 dataset_file = 'dataset.csv'
-loop_timeout = 0.05 # yavaslatmak icin degeri buyutun, grafigin yenileme dongusunun suresi
+loop_timeout = 0.001 # yavaslatmak icin degeri buyutun, grafigin yenileme dongusunun suresi
 
-# yol agirliklari
-w = [0, 0]
+# rastgele yol agirliklari
+rnd1 = random.random()
+rnd2 = random.random()
+w = [rnd1, rnd2]
 
 # esik degeri
 threshold = 0
@@ -19,8 +21,10 @@ bias = 1
 # ogrenme orani
 learning_rate = 1
 
-# maksimum iterasyon
-max_iterations = 100
+# maksimum adim
+max_iterations = 500
+
+last = False
 
 # verileri oku
 import csv
@@ -38,19 +42,19 @@ color = ""
 
 answer = ""
 
-def get_points_of_color(data, label):
+def renk_koordinatlari(data, label):
     x_coords = [float(point.split(",")[0]) for point in data.keys() if data[point] == label]
     y_coords = [float(point.split(",")[1]) for point in data.keys() if data[point] == label]
     return x_coords, y_coords
 
 # mathplotlib ile ilgili bisey
-plt.ion()
+plt.ion() # interactive mode
 
 for k in range(1, max_iterations):
     hits = 0
     print("\n========================= ADIM: "+str(k)+" ========================= ")
 
-    for i in range(0,len(data)):
+    for i in range(0, len(data)):
         sum = 0
 
         # agirliklar toplami
@@ -60,7 +64,7 @@ for k in range(1, max_iterations):
         # bias ekle
         output = bias + sum
 
-        if output > threshold:
+        if output >= threshold:
             y = 1
         else:
             y = -1     
@@ -99,14 +103,14 @@ for k in range(1, max_iterations):
             yA = 1
             yB = -1
 
-        plt.plot([0.77, -0.55], [-1, 1], color='k', linestyle='-', linewidth=1)
+        plt.plot([0.70, -0.50], [-1, 1], color='k', linestyle='-', linewidth=1)
         plt.plot([xA, xB], [yA, yB], color='g', linestyle='-', linewidth=2)
 
         
-        x_coords, y_coords = get_points_of_color(data_dictionary, '-1')
+        x_coords, y_coords = renk_koordinatlari(data_dictionary, '-1')
         plt.plot(x_coords, y_coords, 'bo')
 
-        x_coords, y_coords = get_points_of_color(data_dictionary, '1')
+        x_coords, y_coords = renk_koordinatlari(data_dictionary, '1')
         plt.plot(x_coords, y_coords, 'ro')
 
         if answer == 'dogru':
@@ -119,8 +123,18 @@ for k in range(1, max_iterations):
 
         # bekle
         plt.pause(loop_timeout)
-
+        if last:
+            plt.savefig('result.png')
+            break
+    if last:
+        break
+    
     if hits == len(data):
         print("\n===============================================================")
         print("\n"+str(k)+" adimda ogrenildi!")
-        break
+        last = True
+
+
+from PIL import Image
+result = Image.open("result.png")
+result.show()
